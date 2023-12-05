@@ -1,9 +1,8 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
     <link rel="stylesheet" href="css/bootstrap.min.css">
@@ -21,22 +20,28 @@
     $filename = "";
     $nameError = "";
     $imageError = "";
+    $Message1 = "";
+    $Message2 = "";
 
-    if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_FILES["image"])) {
+    if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["submit"])) {
         if (empty($_POST["name"])) {
             $nameError = "Please enter a name.";
+        } else {
+            $Message1 = "Name is valid!";
         }
+
         if (empty($_FILES["image"]["name"])) {
             $imageError = "Please select an image.";
-        }
-        $filename = $_FILES["image"]["name"];
-        $filename = str_replace(' ', '_', $filename);
-        $filepath = "images/" . $filename;
+        } else {
+            $filename = $_FILES["image"]["name"];
+            $filename = str_replace(' ', '_', $filename);
+            $filepath = "images/" . $filename;
 
-        if (move_uploaded_file($_FILES["image"]["tmp_name"], $filepath)) {
-            $photo = $filepath;
+            if (move_uploaded_file($_FILES["image"]["tmp_name"], $filepath)) {
+                $photo = $filepath;
+                $Message2 = "Image uploaded successfully!";
+            }
         }
-
     }
     ?>
 
@@ -45,10 +50,13 @@
     <form class="col-md-6 offset-md-3" enctype="multipart/form-data" method="post">
         <div class="mb-3">
             <label for="name" class="form-label">Name</label>
-            <input type="text" class="form-control <?php if (!empty($nameError)) echo 'is-invalid'; ?>" name="name"
-                   id="name">
+            <input type="text" class="form-control <?php echo (!empty($nameError)) ? 'is-invalid' : 'is-valid'; ?>" name="name"
+                   id="name" value="<?php echo isset($_POST['name']) ? $_POST['name'] : ''; ?>">
             <div class="invalid-feedback">
-                <?php echo $nameError; ?>
+                <?php echo (!empty($nameError)) ? $nameError : ''; ?>
+            </div>
+            <div class="valid-feedback">
+                <?php echo $Message1; ?>
             </div>
         </div>
 
@@ -63,12 +71,13 @@
             <div class="col-md-8">
                 <div class="mb-3">
                     <label for="image" class="form-label">Choose photo</label>
-                    <input class="form-control <?php if (!empty($imageError)) echo 'is-invalid'; ?>" type="file"
-                           id="image" name="image" accept="image/*" >
+                    <input class="form-control <?php echo (!empty($imageError)) ? 'is-invalid' : 'is-valid'; ?>" type="file"
+                           id="image" name="image" accept="image/*">
                     <div class="invalid-feedback">
-                        <?php
-                        echo $imageError;
-                        ?>
+                        <?php echo $imageError; ?>
+                    </div>
+                    <div class="valid-feedback">
+                        <?php echo $Message2; ?>
                     </div>
                 </div>
             </div>
@@ -78,8 +87,6 @@
     </form>
 </div>
 
-
 <script src="/js/bootstrap.bundle.min.js"></script>
-
 </body>
 </html>
