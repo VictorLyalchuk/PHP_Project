@@ -50,7 +50,7 @@
     <form class="col-md-6 offset-md-3" enctype="multipart/form-data" method="post">
         <div class="mb-3">
             <label for="name" class="form-label">Name</label>
-            <input type="text" class="form-control <?php echo (!empty($nameError)) ? 'is-invalid' : 'is-valid'; ?>" name="name"
+            <input type="text" class="form-control <?php echo (!empty($nameError)) ? 'is-invalid' : ''; ?>" name="name"
                    id="name" value="<?php echo isset($_POST['name']) ? $_POST['name'] : ''; ?>">
             <div class="invalid-feedback">
                 <?php echo (!empty($nameError)) ? $nameError : ''; ?>
@@ -71,7 +71,7 @@
             <div class="col-md-8">
                 <div class="mb-3">
                     <label for="image" class="form-label">Choose photo</label>
-                    <input class="form-control <?php echo (!empty($imageError)) ? 'is-invalid' : 'is-valid'; ?>" type="file"
+                    <input class="form-control <?php echo (!empty($imageError)) ? 'is-invalid' : ''; ?>" type="file"
                            id="image" name="image" accept="image/*">
                     <div class="invalid-feedback">
                         <?php echo $imageError; ?>
