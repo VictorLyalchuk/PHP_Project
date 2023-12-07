@@ -118,6 +118,8 @@ if (isset($_GET['id'])) {
                    id="imagetxt" value="<?php echo $image ?>" hidden>
         </div>
         <button type="submit" class="btn btn-primary" name="submit">Update</button>
+        <a href="/" class="btn btn-secondary">Cancel</a>
+
     </form>
 </div>
 

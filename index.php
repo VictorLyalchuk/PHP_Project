@@ -70,7 +70,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["delete"])) {
             <td><?php echo $row["name"] ?></td>
             <td><?php echo $row["description"] ?></td>
             <td>
-                <a href="#" class="btn btn-info">View</a>
+                <a href="/info.php?id=<?php echo urlencode($row['id']); ?>" class="btn btn-info">View</a>
             </td>
             <td>
                 <a href="/edit.php?id=<?php echo urlencode($row['id']); ?>" class="btn btn-info">Edit</a>

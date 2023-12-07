@@ -111,6 +111,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </div>
 
         <button type="submit" class="btn btn-primary" name="submit">Add</button>
+        <a href="/" class="btn btn-secondary">Cancel</a>
     </form>
 </div>
 
