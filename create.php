@@ -1,3 +1,27 @@
+<?php
+if ($_SERVER["REQUEST_METHOD"] == "POST") {
+    include $_SERVER['DOCUMENT_ROOT'] . "/config/connection_database.php";
+    $name = $_POST["name"];
+    $description = $_POST["description"];
+
+    if (isset($_FILES["image"]) && $_FILES["image"]["error"] == UPLOAD_ERR_OK) {
+        $filename = $_FILES["image"]["name"];
+        $filename = str_replace(' ', '_', $filename);
+        $filepath = "images/" . $filename;
+
+        if (move_uploaded_file($_FILES["image"]["tmp_name"], $filepath)) {
+            $sql = "INSERT INTO categories (name, image, description) VALUES (?, ? , ?)";
+            $stmt = $pdo->prepare($sql);
+
+            $stmt->execute([$name, $filepath, $description]);
+            header("Location: /");
+            exit;
+        }
+    }
+
+}
+
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -36,11 +60,8 @@
             $filename = $_FILES["image"]["name"];
             $filename = str_replace(' ', '_', $filename);
             $filepath = "images/" . $filename;
-
-            if (move_uploaded_file($_FILES["image"]["tmp_name"], $filepath)) {
-                $photo = $filepath;
-                $Message2 = "Image uploaded successfully!";
-            }
+            $photo = $filepath;
+            $Message2 = "Image uploaded successfully!";
         }
     }
     ?>
@@ -59,6 +80,12 @@
                 <?php echo $Message1; ?>
             </div>
         </div>
+
+        <div class="mb-3">
+            <label for="description" class="form-label">Description</label>
+            <textarea class="form-control" name="description" id="description"></textarea>
+        </div>
+
 
         <div class="row">
             <div class="col-md-4">

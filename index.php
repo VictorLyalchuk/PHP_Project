@@ -1,3 +1,18 @@
+<?php
+if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["delete"])) {
+    include $_SERVER['DOCUMENT_ROOT'] . "/config/connection_database.php";
+
+    $id = $_POST["id"];
+
+    $sql = "DELETE FROM categories WHERE id = ?";
+    $stmt = $pdo->prepare($sql);
+    $stmt->execute([$id]);
+
+    header("Location: /");
+    exit;
+}
+?>
+
 <!doctype html>
 <html lang="en">
 <head>
@@ -8,6 +23,14 @@
     <title>Document</title>
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="css/site.css">
+    <script>
+        function deleteConfirmation(id) {
+            var confirmed = confirm("Are you sure you want to delete this category?");
+            if (confirmed) {
+                document.getElementById("deleteForm" + id).submit();
+            }
+        }
+    </script>
 </head>
 <body>
 <div class="container">
@@ -17,20 +40,6 @@
 
 
     <h1 class ="text-center">Caterogies</h1>
-    <?php
-    $n =2;
-    $list = array();
-    $list [0] = [
-        "id" => 1,
-        "name" => "Product",
-        "image" => "https://content.rozetka.com.ua/goods/images/big/358046076.jpg"
-    ];
-    $list [1] = [
-        "id" => 2,
-        "name" => "Product",
-        "image" => "https://content1.rozetka.com.ua/goods/images/big/304917048.jpg"
-    ];
-    ?>
     <table class="table">
         <thead>
         <tr>
@@ -38,6 +47,8 @@
             <th scope="col">Photo</th>
             <th scope="col">Name</th>
             <th scope="col">Description</th>
+            <th scope="col"></th>
+            <th scope="col"></th>
             <th scope="col"></th>
         </tr>
         </thead>
@@ -60,6 +71,15 @@
             <td><?php echo $row["description"] ?></td>
             <td>
                 <a href="#" class="btn btn-info">View</a>
+            </td>
+            <td>
+                <a href="/edit.php?id=<?php echo urlencode($row['id']); ?>" class="btn btn-info">Edit</a>
+            </td>
+            <td>
+                <form method="post" >
+                    <input type="hidden" name="id" value="<?php echo $row['id']; ?>">
+                    <button type="submit" name="delete" class="btn btn-danger">Delete</button>
+                </form>
             </td>
         </tr>
         <?php } ?>
