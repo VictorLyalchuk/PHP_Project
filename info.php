@@ -1,4 +1,5 @@
 <?php
+include $_SERVER['DOCUMENT_ROOT'] . "/_header.php";
 include $_SERVER['DOCUMENT_ROOT'] . "/config/connection_database.php";
 
 if (isset($_GET['id'])) {
@@ -21,7 +22,6 @@ if (isset($_GET['id'])) {
     }
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -34,11 +34,6 @@ if (isset($_GET['id'])) {
 </head>
 <body>
 <div class="container py-3">
-    <?php
-    include $_SERVER['DOCUMENT_ROOT'] . "/_header.php";
-    ?>
-
-
     <h1 class="text-center">Info product</h1>
 
     <form class="col-md-6 offset-md-3" enctype="multipart/form-data">
@@ -61,7 +56,7 @@ if (isset($_GET['id'])) {
         <div class="row">
             <div class="col-md-4">
                 <label for="image" class="form-label" style="cursor: pointer;">
-                    <img src="<?php echo $image; ?>" alt="Selected photo" height="500">
+                    <img src="/images/<?php echo $image; ?>" alt="Selected photo" height="500">
                     <input class="form-control" id="image" name="image" accept="image/*"
                            style="display: none;" readonly >
                 </label>

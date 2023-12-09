@@ -1,7 +1,8 @@
 <?php
+include $_SERVER['DOCUMENT_ROOT'] . "/_header.php";
+include $_SERVER['DOCUMENT_ROOT'] . "/config/connection_database.php";
 if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["delete"])) {
     include $_SERVER['DOCUMENT_ROOT'] . "/config/connection_database.php";
-
     $id = $_POST["id"];
 
     $sql = "DELETE FROM categories WHERE id = ?";
@@ -23,23 +24,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["delete"])) {
     <title>Document</title>
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="css/site.css">
-    <script>
-        function deleteConfirmation(id) {
-            var confirmed = confirm("Are you sure you want to delete this category?");
-            if (confirmed) {
-                document.getElementById("deleteForm" + id).submit();
-            }
-        }
-    </script>
 </head>
 <body>
 <div class="container">
-    <?php include ("_header.php");
-    include $_SERVER['DOCUMENT_ROOT'] . "/config/connection_database.php";
-    ?>
-
-
-    <h1 class ="text-center">Caterogies</h1>
+    <h1 class="text-center">Products</h1>
     <table class="table">
         <thead>
         <tr>
@@ -58,35 +46,82 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($_POST["delete"])) {
         $stmt = $pdo->query($sql);
 
         $results = $stmt->fetchAll(PDO::FETCH_ASSOC);
-        foreach ($results as $row)
-        {
-
-        ?>
-        <tr>
-            <th scope="row"><?php echo $row["id"] ?></th>
-            <td>
-                <img src = "<?php echo $row["image"] ?>" height ="75" alt="Photo">
-            </td>
-            <td><?php echo $row["name"] ?></td>
-            <td><?php echo $row["description"] ?></td>
-            <td>
-                <a href="/info.php?id=<?php echo urlencode($row['id']); ?>" class="btn btn-info">View</a>
-            </td>
-            <td>
-                <a href="/edit.php?id=<?php echo urlencode($row['id']); ?>" class="btn btn-info">Edit</a>
-            </td>
-            <td>
-                <form method="post" >
-                    <input type="hidden" name="id" value="<?php echo $row['id']; ?>">
-                    <button type="submit" name="delete" class="btn btn-danger">Delete</button>
-                </form>
-            </td>
-        </tr>
+        foreach ($results as $row) {
+            ?>
+            <tr>
+                <th scope="row"><?php echo $row["id"] ?></th>
+                <td>
+                    <img src="/images/<?php echo $row["image"]; ?>" height="75" alt="Photo">
+                </td>
+                <td><?php echo $row["name"] ?></td>
+                <td><?php echo $row["description"] ?></td>
+                <td>
+                    <a href="/info.php?id=<?php echo urlencode($row['id']); ?>" class="btn btn-info">View</a>
+                </td>
+                <td>
+                    <a href="/edit.php?id=<?php echo urlencode($row['id']); ?>" class="btn btn-info">Edit</a>
+                </td>
+                <td>
+                    <a href="/" class="btn btn-danger" data-delete="<?php echo $row['id'] ?>">Delete</a>
+                </td>
+            </tr>
         <?php } ?>
         </tbody>
     </table>
-</div>
+    <div class="modal" tabindex="-1" role="dialog" id="modalDelete">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Are you sure?</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <p>Do you want to delete?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" id="btnDeleteConfirm" name="delete" class="btn btn-danger">Delete</button>
+                </div>
+            </div>
+        </div>
+    </div>
 
+</div>
 <script src="/js/bootstrap.bundle.min.js"></script>
+<script src="/js/axios.min.js"></script>
+<script>
+    var myModal = new bootstrap.Modal(document.getElementById('modalDelete'));
+    let id = 0;
+    const list = document.querySelectorAll('[data-delete]');
+    const elementsArray = Array.from(list);
+    elementsArray.forEach(item => {
+        item.addEventListener("click", (e) => {
+            e.preventDefault();
+            id = e.target.dataset.delete;
+            myModal.show();
+
+            //axios.post("");
+            //console.log("delete item", id);
+            //e.target.closest("tr").remove();
+        });
+    });
+    document.getElementById("btnDeleteConfirm").addEventListener("click", async () => {
+        try {
+            const response = await axios.delete(`/delete-product.php?id=${id}`);
+
+            if (response.status === 200) {
+                var item = document.querySelector('[data-delete="'+id+'"]');
+                item.closest("tr").remove();
+            } else {
+                console.error("Failed to delete item");
+            }
+        } catch (error) {
+            console.error("Error:", error);
+        }
+        finally {
+            myModal.hide();
+        }
+    });
+</script>
 </body>
 </html>
